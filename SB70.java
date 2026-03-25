@@ -17,122 +17,227 @@ public class SB70 {
          }
          
          fileReader = new Scanner(source);
-         String[][] data = new String[lineCount][17];
+         String[][] data = new String[lineCount][25];
          String datum;
          for(int i=0; i<lineCount; i++){
             datum = fileReader.nextLine();
-            data[i] = datum.split(",", 17);
+            data[i] = datum.split(",", 25 );
          }
          for(int i=1; i<lineCount; i++){
             if(data[i][1].isBlank()){
                break;
             }
-            data[i][2] = data[i][2].replace(".","");
-            while(data[i][4].length() < 9){
-               data[i][4] = "0" + data[i][4];
+            
+            while(data[i][0].length() < 8){
+               data[i][0] = "0" + data[i][0];
             }
-            while(data[i][5].length() < 25){
-               data[i][5] += " ";
+            
+            data[i][2] = data[i][2].replace("-","");  //ssn
+            while(data[i][2].length() < 9){
+               data[i][2] = "0" + data[i][2];
             }
-            while(data[i][6].length() < 25){
-               data[i][6] += " ";
+            
+            while(data[i][3].length() < 25){
+               data[i][3] += " ";
             }
+            while(data[i][4].length() < 25){
+               data[i][4] += " ";
+            }
+            
+            data[i][5] = dateBuffer(data[i][5]);
+            data[i][6] = dateBuffer(data[i][6]);
             data[i][7] = dateBuffer(data[i][7]);
-            data[i][8] = dateBuffer(data[i][8]);
-            data[i][9] = dateBuffer(data[i][9]);
-            while(data[i][10].length() < 2){
-               data[i][10] = "0" + data[i][10];
-            }
-            switch(data[i][11].toLowerCase()){
+            
+            switch(data[i][8].toLowerCase()){
                case "0":
                   break;
+               case "ba":
+               case "bs":
                case "bachelor":
                case "bachelors":
-                  data[i][11] = "5";
+                  data[i][8] = "5";
                   break;
+               case "aa":
+               case "as":
                case "associates":
-                  data[i][11] = "3";
+                  data[i][8] = "3";
                   break;
                default:
                   log.write("[WARNING] Record " + i + ": " + data[i][11] + " is not a matching degree type, 0 used.\n");
                   logB.write("Degree mismatch: " + data[i][11] + "\n");
-                  data[i][11] = "0";
+                  data[i][8] = "0";
             }
             
-            switch(data[i][12].toLowerCase()){
-               case "transfer in":
-                  data[i][12] = "2";
+            switch(data[i][9].toLowerCase()){
+               case "1":
+               case "a":
+               case "cal a":
+                  data[i][9] = "1";
                   break;
-               case "first time":
-                  data[i][12] = "1";
+               case "2":
+               case "b":
+               case "cal b":
+                  data[i][9] = "2";
+                  break;
+               case "3":
+               case "c":
+               case "cal c":
+                  data[i][9] = "3";
+                  break;
+               case "0":
+               case "none":
+               case "n/a":
+               case "na":
+                  data[i][9] = "0";
                   break;
                default:
-                  log.write("[WARNING] Record " + i + ": " + data[i][12] + " is not a matching enrollment type, 3 used.\n");
-                  logB.write("Enrollment mismatch: " + data[i][12] + "\n");
-                  data[i][12] = "3";
+                  log.write("[WARNING] Record " + i + ": " + data[i][9] + " is not a matching Cal Grant type, 0 used.\n");
+                  logB.write("cal grant mismatch: " + data[i][9] + "\n");
+                  data[i][9] = "0";
             }
             
-            switch(data[i][13].toLowerCase()){
+            switch(data[i][17].toLowerCase()){
+               case "1":
+               case "y":
+                  data[i][17] = "1";
+                  break;
+               case "2":
+               case "n":
+                  data[i][17] = "2";
+                  break;
+               case "0":
+               case "none":
+               case "n/a":
+               case "na":
+                  data[i][17] = "0";
+                  break;
+               default:
+                  log.write("[WARNING] Record " + i + ": " + data[i][17] + " is not a matching pell type, 0 used.\n");
+                  logB.write("pell mismatch: " + data[i][17] + "\n");
+                  data[i][17] = "0";
+            }
+            
+            switch(data[i][15].toLowerCase()){
                case "m":
                case "male":
-                  data[i][13] = "1";
+                  data[i][15] = "1";
                   break;
                case "f":
                case "female":
-                  data[i][13] = "2";
+                  data[i][15] = "2";
                   break;
                default:
-                  log.write("[WARNING] Record " + i + ": " + data[i][13] + " is not a matching gender, 3 used.\n");
-                  logB.write("Gender mismatch: " + data[i][13] + "\n");
-                  data[i][13] = "3";
+                  log.write("[WARNING] Record " + i + ": " + data[i][15] + " is not a matching gender, 4 used.\n");
+                  logB.write("Gender mismatch: " + data[i][15] + "\n");
+                  data[i][15] = "4";
             }
             
-            switch(data[i][14].toLowerCase()){
-               case "hispanic":
-                  data[i][14] = "01";
-                  break;
+            switch(data[i][16].toLowerCase()){
                case "american indian":
-                  data[i][14] = "02";
+               case "american indian/native alaskan":
+                  data[i][16] = "1";
                   break;
                case "asian":
-                  data[i][14] = "03";
+                  data[i][16] = "2";
                   break;
                case "black":
-                  data[i][14] = "04";
+               case "black or african american":
+               case "african am./black/non-hispanic":
+                  data[i][16] = "3";
+                  break;
+               case "hispanic":
+               case "hispanic of any race":
+                  data[i][16] = "4";
                   break;
                case "native hawaiian":
-                  data[i][14] = "05";
-                  break;
                case "pacific islander":
-                  data[i][14] = "05";
+               case "native hawaiian/pacific islander":
+               case "native hawaiian or other pacific islander":
+                  data[i][16] = "5";
                   break;
                case "white":
-                  data[i][14] = "06";
-                  break;
-               case "unknown":
-                  data[i][14] = "07";
-                  break;
-               case "nonresident alien":
-                  data[i][14] = "08";
+               case "white/caucasian/non-hispanic":
+                  data[i][16] = "6";
                   break;
                case "two or more":
                case "two or more races":
-                  data[i][14] = "09";
+                  data[i][16] = "7";
+                  break;
+               case "unknown":
+               case "race and ethnicity unknown":
+               case "other":
+               case "nonresident alien":
+               case "non-resident alien":
+                  data[i][16] = "8";
                   break;
                default:
-                  log.write("[WARNING] Record " + i + ": " + data[i][14] + " is not a matching race, 7 used.\n");
-                  logB.write("Race mismatch: " + data[i][14] + "\n");
-                  data[i][14] = "7";
+                  log.write("[WARNING] Record " + i + ": " + data[i][16] + " is not a matching race, 8 used.\n");
+                  logB.write("Race mismatch: " + data[i][16] + "\n");
+                  data[i][16] = "8";
+            }
+            
+            switch(data[i][20].toLowerCase()){
+               case "transfer in":
+               case "tr":
+                  data[i][20] = "1";
+                  break;
+               case "first time":
+               case "ft":
+                  data[i][20] = "2";
+                  break;
+               default:
+                  log.write("[WARNING] Record " + i + ": " + data[i][20] + " is not a matching enrollment type, 0 used.\n");
+                  logB.write("Enrollment mismatch: " + data[i][20] + "\n");
+                  data[i][20] = "0";
+            }
+            
+            switch(data[i][22].toLowerCase()){
+               case "1":
+               case "y":
+                  data[i][22] = "1";
+                  break;
+               case "2":
+               case "n":
+                  data[i][22] = "2";
+                  break;
+               default:
+                  log.write("[WARNING] Record " + i + ": " + data[i][22] + " is not a matching persitence, 2  used.\n");
+                  logB.write("persist mismatch: " + data[i][22] + "\n");
+                  data[i][22] = "2";
+            }
+            
+            switch(data[i][23].toLowerCase()){
+               case "1":
+               case "y":
+                  data[i][23] = "1";
+                  break;
+               case "2":
+               case "n":
+                  data[i][23] = "2";
+                  break;
+               default:
+                  log.write("[WARNING] Record " + i + ": " + data[i][23] + " is not a matching persitence, 2  used.\n");
+                  logB.write("persist mismatch: " + data[i][23] + "\n");
+                  data[i][23] = "2";
+            }
+            
+            switch(data[i][24].toLowerCase()){
+               case "1":
+               case "y":
+                  data[i][24] = "1";
+                  break;
+               case "2":
+               case "n":
+                  data[i][24] = "2";
+                  break;
+               default:
+                  log.write("[WARNING] Record " + i + ": " + data[i][24] + " is not a matching persitence, 2  used.\n");
+                  logB.write("persist mismatch: " + data[i][24] + "\n");
+                  data[i][24] = "2";
             }
 
-            data[i][16] = data[i][16].replace("X","0");
-            data[i][16] = data[i][16].replace("x","0");
-            while(data[i][16].length() < 6){
-               data[i][16] = "0" + data[i][16];
-            }
                       
-            data[i][15] = dateBuffer(data[i][15]);
-            output.write(data[i][0] + " " + data[i][1] + " " + data[i][2] + " " + data[i][3] + " " + data[i][4] + " " + data[i][5] + " " + data[i][6] + " " + data[i][7] + " " + data[i][8] + " " + data[i][9] + " " + data[i][10] + " " + data[i][11] + " " + data[i][12] + " " + data[i][13] + " " + data[i][14] + " " + data[i][15] + " " + data[i][16] + String.format(" %07d\n", i));
+            output.write(data[i][0] + " " + data[i][1] + " " + data[i][2] + " " + data[i][3] + " " + data[i][4] + " " + data[i][5] + " " + data[i][6] + " " + data[i][7] + " " + data[i][8] + " " + data[i][9] + " " + data[i][10] + " " + data[i][11] + " " + data[i][12] + " " + data[i][13] + " " + data[i][14] + " " + data[i][15] + " " + data[i][16] + " " + data[i][17] + " " + data[i][18] + " " + data[i][19] + " " + data[i][20] + " " + data[i][21] + " " + data[i][22] + " " + data[i][23] + " " + data[i][24] + String.format(" %07d\n", i));
          }
          
          output.close();
@@ -157,6 +262,17 @@ public class SB70 {
       }
       if(parts[1].length() < 2){
          parts[1] = "0" + parts[1];
+      }
+      if(parts[2].length() < 4){
+         if (parts[0] == "00"){
+            parts[2] = "00" + parts[2];
+         }
+         else if(Integer.parseInt(parts[2])>50){
+            parts[2] = "19" + parts[2];
+         }
+         else{
+            parts[2] = "20" + parts[2];
+         }
       }
       date = parts[0] + "/" + parts[1] + "/" + parts[2];
       return date;
