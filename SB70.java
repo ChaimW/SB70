@@ -99,10 +99,12 @@ public class SB70 {
             switch(data[i][17].toLowerCase()){
                case "1":
                case "y":
+               case "yes":
                   data[i][17] = "1";
                   break;
                case "2":
                case "n":
+               case "no":
                   data[i][17] = "2";
                   break;
                case "0":
@@ -186,9 +188,55 @@ public class SB70 {
                   data[i][20] = "2";
                   break;
                default:
-                  log.write("[WARNING] Record " + i + ": " + data[i][20] + " is not a matching enrollment type, 0 used.\n");
-                  logB.write("Enrollment mismatch: " + data[i][20] + "\n");
+                  log.write("[WARNING] Record " + i + ": " + data[i][20] + " is not a matching transfer type, 0 used.\n");
+                  logB.write("transfer mismatch: " + data[i][20] + "\n");
                   data[i][20] = "0";
+            }
+            
+            switch(data[i][19].toLowerCase()){
+               case "1":
+               case "y":
+               case "yes":
+                  data[i][19] = "1";
+                  break;
+               case "2":
+               case "n":
+               case "no":
+                  data[i][19] = "2";
+                  break;
+               case "0":
+               case "none":
+               case "n/a":
+               case "na":
+                  data[i][19] = "0";
+                  break;
+               default:
+                  log.write("[WARNING] Record " + i + ": " + data[i][19] + " is not a matching parent status, 0 used.\n");
+                  logB.write("parent mismatch: " + data[i][19] + "\n");
+                  data[i][19] = "0";
+            }
+            
+            switch(data[i][21].toLowerCase()){
+               case "1":
+               case "y":
+               case "yes":
+                  data[i][21] = "1";
+                  break;
+               case "2":
+               case "n":
+               case "no":
+                  data[i][21] = "2";
+                  break;
+               case "0":
+               case "none":
+               case "n/a":
+               case "na":
+                  data[i][21] = "0";
+                  break;
+               default:
+                  log.write("[WARNING] Record " + i + ": " + data[i][21] + " is not a matching foster status, 0 used.\n");
+                  logB.write("foster mismatch: " + data[i][21] + "\n");
+                  data[i][21] = "0";
             }
             
             switch(data[i][22].toLowerCase()){
@@ -253,9 +301,13 @@ public class SB70 {
          System.out.println("Output error");
       }
       
+      catch (ArrayIndexOutOfBoundsException  e){
+         System.out.println("Date error");         
+      }
+      
    }   // end main method
    
-   private static String dateBuffer(String date){
+   private static String dateBuffer(String date) throws ArrayIndexOutOfBoundsException {
       String[] parts = date.split("/");
       if(parts[0].length() < 2){
          parts[0] = "0" + parts[0];
